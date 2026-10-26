@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "scriptium",
+  "version": "${version}",
+  "name": "Scriptium",
+  "description": "",
+  "authors": ["nyxraze"],
+  "contact": {
+    "sources": "https://github.com/NyxRaze/Scriptium"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/scriptium/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.scriptium.Scriptium"]
+  },
+  "mixins": ["scriptium.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

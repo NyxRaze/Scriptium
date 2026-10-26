@@ -1,0 +1,95 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'com.gradleup.shadow' version '9.2.2'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    graal
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    implementation "org.ow2.asm:asm:9.9"
+
+    implementation "org.graalvm.polyglot:polyglot:25.3.4.1"
+
+    graal "org.graalvm.js:js-language:25.3.4.1"
+	graal "org.graalvm.truffle:truffle-runtime:25.3.4.1"
+}
+
+sourceSets {
+    main {
+        runtimeClasspath += configurations.graal
+    }
+}
+
+processResources {
+    def version = project.version
+    inputs.property "version", version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+    archiveClassifier = "slim"
+
+    def projectName = project.name
+    inputs.property "projectName", projectName
+
+    from("LICENSE") {
+        rename { "${it}_${projectName}" }
+    }
+}
+
+tasks.named("shadowJar") {
+    archiveClassifier = ""
+
+    from sourceSets.main.output
+
+    configurations = [project.configurations.graal]
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    mergeServiceFiles()
+    filesMatching("META-INF/services/**") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
+
+tasks.register("generateScriptTypes", JavaExec) {
+    group = "scriptium"
+    description = "Generates JavaScript typings from Minecraft classes."
+
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.scriptium.dev.TypeGenerator"
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+    }
+}

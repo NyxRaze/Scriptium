@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "com.scriptium.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "accessor.KeyMappingAccessor",
+
+    "MixinBlockItem",
+    "MixinGameRenderer",
+    "MixinGLFW",
+    "MixinKeyboardHandler",
+    "MixinMouseHandler",
+    "MixinMultiPlayerGameMode"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
